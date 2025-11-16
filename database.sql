@@ -2,6 +2,8 @@ CREATE DATABASE vet_clinic;
 USE vet_clinic;
 
 CREATE TABLE Owner (
+    login VARCHAR(50) UNIQUE,
+    password VARCHAR(255),
     owner_id VARCHAR(20) PRIMARY KEY,
     first_name VARCHAR(50),
     last_name VARCHAR(50),
@@ -9,6 +11,8 @@ CREATE TABLE Owner (
 );
 
 CREATE TABLE Veterinarian (
+    login VARCHAR(50) UNIQUE,
+    password VARCHAR(255),
     vet_id INT PRIMARY KEY,
     first_name VARCHAR(50),
     last_name VARCHAR(50)
@@ -45,7 +49,7 @@ CREATE TABLE Veterinarian_Availability (
     FOREIGN KEY (vet_id) REFERENCES Veterinarian(vet_id)
 );
 
-CREATE TABLE Visit {
+CREATE TABLE Visit (
     visit_id INT AUTO_INCREMENT PRIMARY KEY,
     animal_id INT NOT NULL,
     vet_id INT NOT NULL,
@@ -56,4 +60,4 @@ CREATE TABLE Visit {
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (animal_id) REFERENCES Animal(animal_id),
     FOREIGN KEY (vet_id) REFERENCES Veterinarian(vet_id)
-};
+);
