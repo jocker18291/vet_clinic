@@ -44,3 +44,16 @@ CREATE TABLE Veterinarian_Availability (
     sun VARCHAR(50),
     FOREIGN KEY (vet_id) REFERENCES Veterinarian(vet_id)
 );
+
+CREATE TABLE Visit {
+    visit_id INT AUTO_INCREMENT PRIMARY KEY,
+    animal_id INT NOT NULL,
+    vet_id INT NOT NULL,
+    start_time DATETIME NOT NULL,
+    end_time DATETIME,
+    status ENUM('PENDING', 'CONFIRMED', 'CANCELLED', 'DONE') DEFAULT 'PENDING',
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (animal_id) REFERENCES Animal(animal_id),
+    FOREIGN KEY (vet_id) REFERENCES Veterinarian(vet_id)
+};
