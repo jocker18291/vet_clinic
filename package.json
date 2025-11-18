@@ -1,0 +1,20 @@
+{
+  "name": "vet_clinic",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/jocker18291/vet_clinic#readme",
+  "bugs": {
+    "url": "https://github.com/jocker18291/vet_clinic/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jocker18291/vet_clinic.git"
+  },
+  "license": "ISC",
+  "author": "Dawid",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
