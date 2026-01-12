@@ -1,0 +1,179 @@
+/* --- Reset i podstawowe ustawienia --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #D8C0CB; /* jasny róż tło strony */
+}
+
+/* --- Ukrywanie elementów --- */
+.hidden {
+    display: none;
+}
+
+/* --- Panele logowania i użytkownika --- */
+.login-panel, #clientPanel, #vetPanel, #patientsPanel {
+    background: linear-gradient(145deg, #48293D, #45304D); /* gradient ciemny fioletowy */
+    color: #AADBE3; /* jasny niebieski tekst */
+    padding: 2rem;
+    border-radius: 15px;
+    width: 320px;
+    text-align: center;
+    box-shadow: 0 15px 25px rgba(0,0,0,0.3); /* głębszy cień */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-panel:hover, #clientPanel:hover, #vetPanel:hover, #patientsPanel:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 30px rgba(0,0,0,0.35); /* delikatna animacja przy hover */
+}
+
+/* --- Nagłówki paneli --- */
+h2 {
+    margin-bottom: 1.5rem;
+}
+
+/* --- Select i przyciski --- */
+select, button {
+    width: 100%;
+    padding: 0.6rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    background: linear-gradient(145deg, #3d5672, #506F8A); /* gradient ciemny niebieski */
+    color: #AADBE3; /* jasny niebieski tekst */
+    cursor: pointer;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    transition: background 0.3s, color 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover, select:hover {
+    background: linear-gradient(145deg, #506F8A, #3d5672);
+    color: #D8C0CB; /* jasny róż na hover */
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+}
+
+/* --- Lista pacjentów i elementy paneli --- */
+ul {
+    list-style: none;
+    text-align: left;
+    padding-left: 0;
+}
+
+ul li {
+    background: linear-gradient(145deg, #3d5672, #506F8A); /* gradient ciemny niebieski */
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #AADBE3; /* jasny niebieski tekst */
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+ul li button {
+    width: auto;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.9rem;
+    background: linear-gradient(145deg, #3d5672, #506F8A);
+    color: #AADBE3;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+ul li button:hover {
+    background: linear-gradient(145deg, #506F8A, #3d5672);
+    color: #D8C0CB;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+}
+/* --- Animacja pojawiania paneli --- */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-panel, #clientPanel, #vetPanel, #patientsPanel{
+    /* już istniejące style */
+    opacity: 1; /* domyślnie widoczne */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* efekt przy pokazywaniu (usunięcie klasy hidden) */
+.login-panel.show, #clientPanel.show, #vetPanel.show, #patientsPanel.show{
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+button:active, ul li button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* --- KALENDARZ --- */
+#calendarPanel {
+    background: linear-gradient(145deg, #48293D, #45304D); /* ten sam fiolet */
+    color: #AADBE3;
+    padding: 2rem;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0 15px 25px rgba(0,0,0,0.3);
+}
+
+.calendar-wrapper {
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+}
+
+.calendar-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0.4rem;
+    background: transparent;
+}
+
+.calendar-table th {
+    background: linear-gradient(145deg, #3d5672, #506F8A); /* ciemny niebieski */
+    color: #AADBE3;
+    padding: 0.6rem;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.calendar-table td {
+    background: #AADBE3; /* JASNO NIEBIESKIE POLA */
+    color: #45304D;     /* ciemny fiolet tekst */
+    padding: 0.7rem;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 70px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.calendar-table td:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    cursor: pointer;
+}
+
