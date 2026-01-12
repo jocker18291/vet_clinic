@@ -2,9 +2,9 @@ import { User } from "../models/user.model.js";
 
 const registerUser = async (req, res) => {
 try {
-    const { email, password, firstName, lastName } = req.body;
+    const { email, password, firstName, lastName, address } = req.body;
 
-    if (!email || !password || !firstName || !lastName) {
+    if (!email || !password || !firstName || !lastName || !address) {
         return res.status(400).json({ message : "All fields are required!"})
     }
 
@@ -18,12 +18,13 @@ try {
         password,
         firstName,
         lastName,
+        address,
         loggedIn: false,
     });
 
     res.status(201).json({
         message: "User registered",
-        user: {id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName}
+        user: {id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName, address: user.address}
     });
 } catch (error) {
     res.status(500).json({ message: "Internal server error", error: error.
@@ -54,7 +55,8 @@ const loginUser = async (req, res) => {
                 id: user._id,
                 email: user.email,
                 firstName: user.firstName,
-                lastName: user.lastName
+                lastName: user.lastName,
+                address: user.address
             }
         })
     } catch (error) {
