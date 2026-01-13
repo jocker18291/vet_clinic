@@ -1,11 +1,12 @@
 import { Animal } from "../models/animal.model.js"
 import { User } from "../models/user.model.js"
+import { Vet } from "../models/vet.model.js"
 
 const registerAnimal = async (req, res) => {
     try {
-        const { species, name, ownerID } = req.body;
+        const { species, name, ownerID, vetID} = req.body;
 
-        if(!species || !name || !ownerID) {
+        if(!species || !name || !ownerID || !vetID) {
             return res.status(400).json({
                 message: "All fields are required!"
             })
@@ -30,16 +31,25 @@ const registerAnimal = async (req, res) => {
             })
         }
 
+        const vetExist = await Vet.findById(vetID)
+
+        if(!vetExist) {
+            return res.status(400).json({
+                message: "Vet does not exist"
+            })
+        }
+
         const animal = await Animal.create({
             species: species,
             name: name,
-            owners: [ownerID]
+            owners: [ownerID],
+            primaryVet: vetID
         });
 
         res.status(201).json({
             message: "Animal registered",
             animal: {
-                id: animal._id, species: animal.species, name: animal.name, ownerID: animal.ownerID, vetID: animal.vetID, lastVisit: animal.lastVisit
+                id: animal._id, species: animal.species, name: animal.name, ownerID: animal.owners, vetID: animal.primaryVet, lastVisit: animal.lastVisit
             }
         })
     } catch (error) {

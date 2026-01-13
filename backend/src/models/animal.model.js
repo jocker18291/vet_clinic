@@ -15,7 +15,7 @@ const animalSchema = new Schema({
     }],
     primaryVet: {
         type: Schema.Types.ObjectID,
-        ref: 'User'
+        ref: 'Vet'
     },
     lastVisit: {
         type: Date
