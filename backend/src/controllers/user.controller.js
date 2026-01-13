@@ -2,19 +2,19 @@ import { User } from "../models/user.model.js";
 
 const registerUser = async (req, res) => {
 try {
-    const { email, password, firstName, lastName, address } = req.body;
+    const { login, password, firstName, lastName, address } = req.body;
 
-    if (!email || !password || !firstName || !lastName || !address) {
+    if (!login || !password || !firstName || !lastName || !address) {
         return res.status(400).json({ message : "All fields are required!"})
     }
 
-    const existing = await User.findOne({ email: email.toLowerCase() });
+    const existing = await User.findOne({ login });
     if (existing) {
         return res.status(400).json({ message: "User already exists!"})
     }
 
     const user = await User.create({
-        email: email.toLowerCase(),
+        login,
         password,
         firstName,
         lastName,
@@ -24,7 +24,7 @@ try {
 
     res.status(201).json({
         message: "User registered",
-        user: {id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName, address: user.address}
+        user: {id: user._id, login: user.login, firstName: user.firstName, lastName: user.lastName, address: user.address}
     });
 } catch (error) {
     res.status(500).json({ message: "Internal server error", error: error.
@@ -34,10 +34,10 @@ try {
 
 const loginUser = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { login, password } = req.body;
 
         const user = await User.findOne({
-            email: email.toLowerCase()
+            login
         });
 
         if(!user) return res.status(400).json({
@@ -53,7 +53,7 @@ const loginUser = async (req, res) => {
             message: "User logged in!",
             user: {
                 id: user._id,
-                email: user.email,
+                login: user.login,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 address: user.address
@@ -68,10 +68,10 @@ const loginUser = async (req, res) => {
 
 const logoutuser = async (req, res) => {
     try {
-        const { email } = req.body;
+        const { login } = req.body;
 
         const user = await User.findOne({
-            email
+            login
         });
 
         if(!user) return res.status(404).json({

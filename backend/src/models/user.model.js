@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 
 const userSchema = new Schema (
     {
-        email: {
+        login: {
         type: String,
         required: true,
         unique: true,
@@ -22,25 +22,10 @@ const userSchema = new Schema (
             type: String,
             required: true
         },
-        role: {
-            type: String,
-            enum: ['owner', 'vet', 'admin'],
-            default: 'owner',
-            required: true
-        },
-
         address: {
             type: String,
+            required: true
         },
-        availability: {
-            mon: {type: String },
-            tue: {type: String },
-            wed: {type: String },
-            thu: {type: String },
-            fri: {type: String },
-            sat: {type: String },
-            sun: {type: String }
-        }
     }, {
         timestamps: true
     });
