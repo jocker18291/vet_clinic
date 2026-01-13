@@ -1,23 +1,10 @@
-const loginBtn = document.getElementById("loginBtn");
 const GoNextBtn = document.getElementById("GoNextBtn");
 const userTypeSelect = document.getElementById("userType");
-const clientPanel = document.getElementById("clientPanel");
 const vetPanel = document.getElementById("vetPanel");
 const loginPanel = document.querySelector(".login-panel");
 const loginInput = document.getElementById("loginInput");
 const passwordInput = document.getElementById("passwordInput");
-
-const registerBtn = document.getElementById("registerBtn");
-const registerPanel = document.getElementById("registerPanel");
-const backToLoginBtn = document.getElementById("backToLoginBtn");
-
-const regEmail = document.getElementById("regEmail");
-const regPassword = document.getElementById("regPassword");
-const regPasswordConfirm = document.getElementById("regPasswordConfirm");
-const regFirstName = document.getElementById("regFirstName");
-const regLastName = document.getElementById("regLastName");
-const regAddress = document.getElementById("regAddress");
-const createAccountBtn = document.getElementById("createAccountBtn");
+const clientPanel = document.getElementById("clientPanel");
 
 const calendarBtn = document.getElementById("calendarBtn");
 const calendarPanel = document.getElementById("calendarPanel");
@@ -48,6 +35,8 @@ GoNextBtn.addEventListener("click", () => {
 });
 
 // LOGOWANIE
+const loginBtn = document.getElementById("loginBtn");
+
 loginBtn.addEventListener("click", async() => {
     const login = loginInput.value.trim();
     const password = passwordInput.value.trim();
@@ -83,6 +72,10 @@ loginBtn.addEventListener("click", async() => {
 
 
 // PANEL REJESTRACJI
+const registerBtn = document.getElementById("registerBtn");
+const registerPanel = document.getElementById("registerPanel");
+const backToLoginBtn = document.getElementById("backToLoginBtn");
+
 registerBtn && registerBtn.addEventListener("click", () => {
     loginPanel.classList.add("hidden");
     registerPanel.classList.remove("hidden");
@@ -90,48 +83,71 @@ registerBtn && registerBtn.addEventListener("click", () => {
 });
 
 // UTWORZENIE KONTA
+const regEmail = document.getElementById("regEmail");
+const regPassword = document.getElementById("regPassword");
+const regFirstName = document.getElementById("regFirstName");
+const regLastName = document.getElementById("regLastName");
+const regAddress = document.getElementById("regAddress");
+const createAccountBtn = document.getElementById("createAccountBtn");
+const userTypeRSelect = document.getElementById("userTypeR");
+
 createAccountBtn && createAccountBtn.addEventListener("click", async () => {
+    const typeR = userTypeRSelect.value; 
     const login = regEmail.value.trim();
     const password = regPassword.value.trim();
-    const passwordConfirm = regPasswordConfirm.value.trim();
     const firstName = regFirstName.value.trim();
     const lastName = regLastName.value.trim();
     const address = regAddress.value.trim();
 
-    if (!login || !password || !passwordConfirm || !firstName || !lastName) {
-        alert("Uzupełnij wszystkie pola");
-        return;
+    if(typeR === "client") { 
+        if (!login || !password || !firstName || !lastName || !address) {
+            alert("Uzupełnij wszystkie pola");
+            return;
+        }
     }
 
-    if (password !== passwordConfirm) {
-        alert("Hasła nie są takie same");
-        return;
+    if(typeR === "vet") { 
+        if (!login || !password || !firstName || !lastName) {
+            alert("Uzupełnij wszystkie pola");
+            return;
+        }
     }
 
     try {
-        const response = await fetch("/api/v1/users/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                login,
-                password,
-                firstName,
-                lastName,
-                address
-            })
-        });
+        if(typeR === "client"){
+            const response = await fetch("/api/v1/users/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    login,
+                    password,
+                    firstName,
+                    lastName,
+                    address
+                })
+            });
+            const data = await response.json();
+       }
 
-        const data = await response.json();
+        if(typeR === "vet"){
+            const response = await fetch("/api/v1/vet/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    login,
+                    password,
+                    firstName,
+                    lastName
+                })
+            });
+            const data = await response.json();
+       }
 
-        if (response.ok) {
-            alert("Rejestracja zakończona sukcesem!");
-            // powrót do logowania
-            registerPanel.classList.add("hidden");
-            loginPanel.classList.remove("hidden");
-            loginPanel.classList.add("show");
-        } else {
-            alert(`Błąd rejestracji: ${data.message}`);
-        }
+        alert("Rejestracja zakończona sukcesem!");
+        // powrót do logowania
+        registerPanel.classList.add("hidden");
+        loginPanel.classList.remove("hidden");
+        loginPanel.classList.add("show");
 
     } catch (err) {
         alert(`Błąd połączenia z serwerem: ${err.message}`);
