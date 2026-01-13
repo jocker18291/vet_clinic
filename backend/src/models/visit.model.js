@@ -8,7 +8,7 @@ const visitSchema = new Schema ({
     },
     vet: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'Vet',
         required: true
     },
     startTime: {
@@ -20,8 +20,8 @@ const visitSchema = new Schema ({
     },
     status: {
         type: String,
-        enum: ['PENDING', 'CONFIRMED', 'CANCELLED', 'DONE'],
-        default: 'PENDING'
+        enum: ['SCHEDULED', 'COMPLETED', 'CANCELLED'],
+        default: 'SCHEDULED'
     },
     description: {
         type: String
