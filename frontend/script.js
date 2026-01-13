@@ -38,10 +38,10 @@ GoNextBtn.addEventListener("click", () => {
 const loginBtn = document.getElementById("loginBtn");
 
 loginBtn.addEventListener("click", async() => {
-    const login = loginInput.value.trim();
+    const email = loginInput.value.trim();
     const password = passwordInput.value.trim();
 
-    if (!login || !password) {
+    if (!email || !password) {
         alert("Podaj login i hasło");
         return;
     }
@@ -50,7 +50,7 @@ loginBtn.addEventListener("click", async() => {
         const response = await fetch("/api/v1/users/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ login, password })
+            body: JSON.stringify({ email, password })
         });
 
         const data = await response.json();
@@ -93,21 +93,21 @@ const userTypeRSelect = document.getElementById("userTypeR");
 
 createAccountBtn && createAccountBtn.addEventListener("click", async () => {
     const typeR = userTypeRSelect.value; 
-    const login = regEmail.value.trim();
+    const email = regEmail.value.trim();
     const password = regPassword.value.trim();
     const firstName = regFirstName.value.trim();
     const lastName = regLastName.value.trim();
     const address = regAddress.value.trim();
 
     if(typeR === "client") { 
-        if (!login || !password || !firstName || !lastName || !address) {
+        if (!email || !password || !firstName || !lastName || !address) {
             alert("Uzupełnij wszystkie pola");
             return;
         }
     }
 
     if(typeR === "vet") { 
-        if (!login || !password || !firstName || !lastName) {
+        if (!email || !password || !firstName || !lastName) {
             alert("Uzupełnij wszystkie pola");
             return;
         }
@@ -119,29 +119,27 @@ createAccountBtn && createAccountBtn.addEventListener("click", async () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    login,
+                    email,
                     password,
                     firstName,
                     lastName,
                     address
                 })
             });
-            const data = await response.json();
-       }
-
-        if(typeR === "vet"){
+       } else if(typeR === "vet") {
             const response = await fetch("/api/v1/vet/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    login,
+                    email,
                     password,
                     firstName,
                     lastName
                 })
             });
-            const data = await response.json();
        }
+
+        const data = await response.json();
 
         alert("Rejestracja zakończona sukcesem!");
         // powrót do logowania
