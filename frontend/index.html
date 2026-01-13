@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Klinika Weterynaryjna</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-panel">
+        <h2>Panel logowania</h2>
+        <label>
+            Wybierz typ użytkownika:
+            <select id="userType">
+                <option value="client">Klient</option>
+                <option value="vet">Weterynarz</option>
+            </select>
+        </label>
+        <button id="GoNextBtn">Przejdź dalej</button>
+ 
+        <input type="text" id="loginInput" placeholder="Login">
+        <input type="password" id="passwordInput" placeholder="Hasło">
+
+        <button id="loginBtn">Zaloguj</button>
+        <button id="registerBtn">Załóż konto</button>
+    </div>
+
+<!-- Panel rejestracji -->
+    <div id="registerPanel" class="hidden">
+        <h2>Rejestracja</h2>
+
+        <input type="text" placeholder="Email" id="regEmail">
+        <input type="password" placeholder="Hasło" id="regPassword">
+        <input type="password" placeholder="Powtórz hasło" id="regPasswordConfirm">
+
+    <input type="text" placeholder="Imię" id="regFirstName">
+    <input type="text" placeholder="Nazwisko" id="regLastName">
+    <input type="text" placeholder="Adres" id="regAddress">
+
+        <div class="register-buttons">
+            <button id="createAccountBtn">Utwórz konto</button>
+            <button id="backToLoginBtn">Powrót</button>
+        </div>
+    </div>
+
+<!-- Panel Klienta -->
+    <div id="clientPanel" class="hidden">
+        <h2>Pacjenci</h2>
+        <ul>
+            <li>Fido - ostatnia wizyta: 2025-12-20 <button>Umów wizytę</button></li>
+            <li>Kitty - ostatnia wizyta: 2025-12-18 <button>Umów wizytę</button></li>
+        </ul>
+        <button id="addPetBtn">Dodaj pupila</button>
+    </div>
+
+<!-- Panel Weterynarza -->
+    <div id="vetPanel" class="hidden">
+        <h2>Panel Weterynarza</h2>
+        <ul>
+            <button id="calendarBtn">Kalendarz</button>
+            <button id="patientsBtn">Pacjenci</button>
+            <button id="dayStatusBtn">Stan dnia: 3 wizyty do końca</button>
+            <button id="pendingBtn"> Wizyty oczekujące do zatwierdzenia: 2</button>
+        </ul>
+    </div>
+
+    <div id="calendarPanel" class="hidden">
+        <h2>Kalendarz wizyt</h2>
+        <div class="calendar-wrapper">
+        <table class="calendar-table">
+            <thead>
+                <tr>
+                    <th>Godzina</th>
+                    <th>Pon</th>
+                    <th>Wt</th>
+                    <th>Śr</th>
+                    <th>Czw</th>
+                    <th>Pt</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>08:00</td>
+                    <td></td>
+                    <td>Fido</td>
+                    <td></td>
+                    <td>Kitty</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>10:00</td>
+                    <td></td>
+                    <td></td>
+                    <td>Max</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>12:00</td>
+                    <td>Luna</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Bella</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+        <button id="backToVet">Powrót</button>
+    </div>
+
+<!-- PANEL PACJENTÓW WETERYNARZA -->
+    <div id="patientsPanel" class="hidden">
+        <h2>Pacjenci Weterynarza</h2>
+
+        <div class="patients-buttons">
+            <button id="FidoBtn">Fido</button>
+            <button id="KittyBtn">Kitty</button>
+            <button id="MaxBtn">Max</button>
+            <button id="LunaBtn">Luna</button>
+        </div>
+        <button id="backToVet1">Powrót</button>
+    </div>
+
+<!--- DODAJ ZWIERZAKA (owner) --->
+     <div id="addPetPanel" class="hidden">
+        <h2>Dodaj zwierzaka</h2>
+        <input type="text" id="petName" placeholder="Imię zwierzaka">
+        <input type="text" id="petSpecies" placeholder="Gatunek (pies, kot)">
+    
+        <div class="register-buttons">
+            <button id="savePetBtn">Zapisz</button>
+            <button id="backToClientBtn">Powrót</button>
+        </div>
+     </div>
+ 
+    <script src="script.js"></script>
+
+</body>
+
+</html>
