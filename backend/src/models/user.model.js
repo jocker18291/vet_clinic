@@ -3,7 +3,16 @@ import bcrypt from "bcrypt";
 
 const userSchema = new Schema (
     {
-        login: {
+     /**
+      * NOTE: 'email' is the unique identifier for users.
+      * 
+      * Do NOT revert back to 'login' as the unique field.
+      * MongoDB has a UNIQUE index on 'email'.
+      * Using 'login' instead
+      * will break uniqueness and can cause E11000 
+      * duplicate key errors.
+      */
+        email: {
         type: String,
         required: true,
         unique: true,
