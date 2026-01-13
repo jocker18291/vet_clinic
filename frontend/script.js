@@ -32,7 +32,6 @@ const KittyBtn = document.getElementById("KittyBtn");
 const MaxBtn = document.getElementById("MaxBtn");
 const LunaBtn = document.getElementById("LunaBtn");
 
-let currentUserId = null; // globalna zmienna do przechowywania zalogowanego usera
 
 // WYBÓR PRZEGLĄDANIA PANELU WET I KLIENTA
 GoNextBtn.addEventListener("click", () => { 
@@ -50,20 +49,19 @@ GoNextBtn.addEventListener("click", () => {
 
 // LOGOWANIE
 loginBtn.addEventListener("click", async() => {
-    const email = loginInput.value.trim();
+    const login = loginInput.value.trim();
     const password = passwordInput.value.trim();
 
-    if (!email || !password) {
+    if (!login || !password) {
         alert("Podaj login i hasło");
         return;
     }
 
     try {
-        // zakładam endpoint do logowania zwracający dane użytkownika w tym jego _id
         const response = await fetch("/api/v1/users/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ login, password })
         });
 
         const data = await response.json();
@@ -72,16 +70,6 @@ loginBtn.addEventListener("click", async() => {
             alert(data.message || "Błąd logowania");
             return;
         }
-
-        // zapisujemy zalogowanego usera
-        currentUserId = data._id; // <-- ID użytkownika z backendu
-        if (!currentUserId) {
-            alert("Backend nie zwrócił ID użytkownika");
-            return;
-        }
-        localStorage.setItem("currentUserId", data._id);
-
-        console.log("Zalogowany user ID:", currentUserId);
 
     // NA RAZIE: zawsze logujemy jako klient
     loginPanel.classList.add("hidden");
@@ -103,14 +91,14 @@ registerBtn && registerBtn.addEventListener("click", () => {
 
 // UTWORZENIE KONTA
 createAccountBtn && createAccountBtn.addEventListener("click", async () => {
-    const email = regEmail.value.trim();
+    const login = regEmail.value.trim();
     const password = regPassword.value.trim();
     const passwordConfirm = regPasswordConfirm.value.trim();
     const firstName = regFirstName.value.trim();
     const lastName = regLastName.value.trim();
     const address = regAddress.value.trim();
 
-    if (!email || !password || !passwordConfirm || !firstName || !lastName) {
+    if (!login || !password || !passwordConfirm || !firstName || !lastName) {
         alert("Uzupełnij wszystkie pola");
         return;
     }
@@ -125,7 +113,7 @@ createAccountBtn && createAccountBtn.addEventListener("click", async () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                email,
+                login,
                 password,
                 firstName,
                 lastName,
@@ -217,10 +205,6 @@ savePetBtn.addEventListener("click", async () => {
         return;
     }
 
-    if (!currentUserId) {
-        alert("Musisz być zalogowany");
-        return;
-    }
 
     try {
         const response = await fetch("/api/v1/animals/register", {
