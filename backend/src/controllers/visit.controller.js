@@ -1,6 +1,7 @@
 import { Visit } from "../models/visit.model.js"
 import { Animal } from "../models/animal.model.js"
 import { Vet } from "../models/vet.model.js";
+import { Availability } from "../models/vetavail.model.js";
 
 const registerVisit = async (req, res) => {
     try {
@@ -26,14 +27,44 @@ const registerVisit = async (req, res) => {
             })
         }
 
+        const start = new Date(startTime);
+        const hour = start.getUTCHours();
+
+        if(hour < 6 || hour >= 22) {
+            return res.status(400).json({
+                message: "Clinic not open"
+            })
+        }
+
+        const bookingDate = new Date(startTime);
+        bookingDate.setUTCHours(0, 0, 0, 0);
+        const timeSlot = hour.toString().padStart(2, '0') + ":00";
+
+        const dayAvailability = await Availability.findOne({
+            vet: vet,
+            date: bookingDate,
+            slots: { $elemMatch: { time: timeSlot, isAvailable: true } }
+        });
+
+        if(!dayAvailability) {
+            return res.status(400).json({
+                message: "Slot not available"
+            })
+        }
+
         const visit = await Visit.create({
             animal,
             vet,
-            startTime,
-            endTime,
+            startTime: start,
+            endTime: new Date(endTime),
             status,
             description
         })
+
+        await Availability.updateOne( {
+            vet: vet, date: bookingDate, "slots.time": timeSlot},
+            { $set: { "slots.$.isAvailable": false}
+        });
 
         res.status(201).json({
             message: "Visit registered",
