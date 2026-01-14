@@ -1,10 +1,12 @@
-const GoNextBtn = document.getElementById("GoNextBtn");
+const loginBtn = document.getElementById("loginBtn");
 const userTypeSelect = document.getElementById("userType");
 const vetPanel = document.getElementById("vetPanel");
 const loginPanel = document.querySelector(".login-panel");
 const loginInput = document.getElementById("loginInput");
 const passwordInput = document.getElementById("passwordInput");
 const clientPanel = document.getElementById("clientPanel");
+
+let loggedId = null;
 
 const calendarBtn = document.getElementById("calendarBtn");
 const calendarPanel = document.getElementById("calendarPanel");
@@ -20,39 +22,43 @@ const MaxBtn = document.getElementById("MaxBtn");
 const LunaBtn = document.getElementById("LunaBtn");
 
 
-// WYBÓR PRZEGLĄDANIA PANELU WET I KLIENTA
-GoNextBtn.addEventListener("click", () => { 
-    const type = userTypeSelect.value;
-    loginPanel.classList.add("hidden");
-
-    if(type === "client") { 
-        clientPanel.classList.remove("hidden");
-        clientPanel.classList.add("show"); 
-    } else if(type === "vet") { 
-        vetPanel.classList.remove("hidden"); 
-        vetPanel.classList.add("show"); 
-    } 
-});
-
 // LOGOWANIE
-const loginBtn = document.getElementById("loginBtn");
 
 loginBtn.addEventListener("click", async() => {
-    const email = loginInput.value.trim();
     const password = passwordInput.value.trim();
-
-    if (!email || !password) {
-        alert("Podaj login i hasło");
-        return;
-    }
-
+    const type = userTypeSelect.value;
+ 
     try {
-        const response = await fetch("/api/v1/users/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
-        });
+        if (type === "client"){
+            const email = loginInput.value.trim();
+            
+            if (!email || !password) {
+                alert("Podaj login i hasło");
+                return;
+            }
 
+           response = await fetch("/api/v1/users/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
+        
+        } else if (type === "vet"){
+            const login = loginInput.value.trim();
+             
+             if (!login || !password) {
+                alert("Podaj login i hasło");
+                return;
+            }
+
+           response = await fetch("/api/v1/vet/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ login, password })
+            });
+       
+        }
+       
         const data = await response.json();
 
         if (!response.ok) {
@@ -60,11 +66,20 @@ loginBtn.addEventListener("click", async() => {
             return;
         }
 
-    // NA RAZIE: zawsze logujemy jako klient
-    loginPanel.classList.add("hidden");
-    clientPanel.classList.remove("hidden");
-    clientPanel.classList.add("show");
+    if (type === "client"){
+        loggedId = data.user.id;
+        
+        loginPanel.classList.add("hidden");
+        clientPanel.classList.remove("hidden");
+        clientPanel.classList.add("show");
     
+    } else if (type === "vet"){
+        loggedId = data.vet.id;
+        
+        loginPanel.classList.add("hidden");
+        vetPanel.classList.remove("hidden");
+        vetPanel.classList.add("show");
+    }
     } catch (err) {
         alert(`Błąd połączenia z serwerem: ${err.message}`);
     }
@@ -115,7 +130,7 @@ createAccountBtn && createAccountBtn.addEventListener("click", async () => {
 
     try {
         if(typeR === "client"){
-            const response = await fetch("/api/v1/users/register", {
+            response = await fetch("/api/v1/users/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -127,11 +142,11 @@ createAccountBtn && createAccountBtn.addEventListener("click", async () => {
                 })
             });
        } else if(typeR === "vet") {
-            const response = await fetch("/api/v1/vet/register", {
+            response = await fetch("/api/v1/vet/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    email,
+                    login,
                     password,
                     firstName,
                     lastName
@@ -139,14 +154,19 @@ createAccountBtn && createAccountBtn.addEventListener("click", async () => {
             });
        }
 
-        const data = await response.json();
+            const data = await response.json();
 
-        alert("Rejestracja zakończona sukcesem!");
-        // powrót do logowania
-        registerPanel.classList.add("hidden");
-        loginPanel.classList.remove("hidden");
-        loginPanel.classList.add("show");
+            alert("Rejestracja zakończona sukcesem!");
+            // powrót do logowania
+            registerPanel.classList.add("hidden");
+            loginPanel.classList.remove("hidden");
+            loginPanel.classList.add("show");
 
+        if (!response.ok) {
+            alert(data.message || "Błąd rejestracji");
+            return;
+        }
+    
     } catch (err) {
         alert(`Błąd połączenia z serwerem: ${err.message}`);
     }
@@ -171,7 +191,7 @@ calendarBtn.addEventListener("click", () => {
 backToVet.addEventListener("click", () => {
     calendarPanel.classList.add("hidden");
     vetPanel.classList.remove("hidden");
-    vetPanel.classList.remove("show");
+    vetPanel.classList.add("show");
 });
 
 // PACJENCI (Weterynarz)
