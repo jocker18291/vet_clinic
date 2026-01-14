@@ -5,9 +5,9 @@ import { Vet } from "../models/vet.model.js"
 
 const registerAnimal = async (req, res) => {
     try {
-        const { species, name, ownerID, vetID} = req.body;
+        const { species, name, ownerID } = req.body;
 
-        if(!species || !name || !ownerID || !vetID) {
+        if(!species || !name || !ownerID) {
             return res.status(400).json({
                 message: "All fields are required!"
             })
@@ -32,19 +32,10 @@ const registerAnimal = async (req, res) => {
             })
         }
 
-        const vetExist = await Vet.findById(vetID)
-
-        if(!vetExist) {
-            return res.status(400).json({
-                message: "Vet does not exist"
-            })
-        }
-
         const animal = await Animal.create({
             species: species,
             name: name,
-            owners: [ownerID],
-            primaryVet: vetID
+            owners: [ownerID]
         });
 
         res.status(201).json({
@@ -182,9 +173,52 @@ const getMyVisitHistory = async (req, res) => {
     }
 }
 
+const assignVet = async (req, res) => {
+    try {
+        const { animalId, vetId } = req.body;
+
+        if(!animalId || !vetId) {
+            return res.status(400).json({
+                message: "All fields are required!"
+            })
+        }
+
+        const vetExist = await Vet.findById(vetId);
+        if(!vetExist) {
+            return res.status(400).json({
+                message: "Vet does not exist"
+            })
+        }
+
+        const animal = await Animal.findById(animalId);
+
+
+        if(!animal) {
+            return res.status(400).json({
+                message: "Animal not found"
+            })
+        }
+
+        animal.primaryVet = vetId;
+        await animal.save();
+
+        const updatedAnimal = await animal.populate('primaryVet', 'firstName lastName');
+
+        res.status(200).json({
+            message: "Vet has been assigned",
+            animal
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal Server Error", error: error.message
+        })
+    }
+}
+
 export {
     registerAnimal,
     transferAnimal,
     getMyAnimals,
-    getMyVisitHistory
+    getMyVisitHistory,
+    assignVet
 }
