@@ -114,7 +114,40 @@ const deleteVisit = async (req, res) => {
     }
 }
 
+const completeVisit = async (req, res) => {
+    try {
+        const { visitID } = req.params;
+        const { description } = req.body;
+
+        const visit = await Visit.findById(visitID);
+        if(!visit) {
+            return res.status(400).json({
+                message: "Visit does not exist"
+            })
+        }
+
+        const updatedVisit = await Visit.findByIdAndUpdate(
+            visitID,
+            {
+                status: 'COMPLETED',
+                description: description || visit.description
+            },
+            { new: true}
+        );
+
+        res.status(200).json({
+            message: "Visit completed",
+            visit: updatedVisit
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal Server Error", error: error.message
+        })
+    }
+}
+
 export {
     registerVisit,
-    deleteVisit
+    deleteVisit,
+    completeVisit
 }
