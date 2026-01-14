@@ -209,9 +209,36 @@ const getMonthlyStats = async (req, res) => {
     }
 };
 
+const getVetVisits = async (req, res) => {
+    try {
+        const { vetId } = req.params;
+
+        const visits = await Visit.find({ vet: vetId })
+        .populate('animal', 'name species')
+        .sort({ startTime: -1 });
+
+        if(!visits || visits.length === 0) {
+            return res.status(400).json({
+                message: "No visits for that vet"
+            })
+        }
+
+        res.status(200).json({
+            message: "Vet history downloaded",
+            count: visits.length,
+            visits
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal Server Error", error: error.message
+        })
+    }
+};
+
 export {
     registerVisit,
     deleteVisit,
     completeVisit,
-    getMonthlyStats
+    getMonthlyStats,
+    getVetVisits
 }
