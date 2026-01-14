@@ -1,4 +1,7 @@
 import { User } from "../models/user.model.js";
+import { Animal } from "../models/animal.model.js";
+import { Visit } from "../models/visit.model.js";
+import { Availability } from "../models/vetavail.model.js";
 
 const registerUser = async (req, res) => {
 try {
@@ -96,8 +99,58 @@ const logoutuser = async (req, res) => {
     }
 }
 
+
+const deleteUserAccount = async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        const animals = await Animal.find({ owners: userId });
+
+        for (const animal of animals) {
+            if (animal.owners.length === 1) {
+                const scheduledVisits = await Visit.find({ 
+                    animal: animal._id, 
+                    status: 'SCHEDULED' 
+                });
+
+                for (const visit of scheduledVisits) {
+                    const bookingDate = new Date(visit.startTime);
+                    bookingDate.setUTCHours(0, 0, 0, 0);
+                    const timeSlot = visit.startTime.getUTCHours().toString().padStart(2, '0') + ":00";
+
+                    await Visit.findByIdAndUpdate(visit._id, { status: 'CANCELLED' });
+                    await Availability.updateOne(
+                        { vet: visit.vet, date: bookingDate, "slots.time": timeSlot },
+                        { $set: { "slots.$.isAvailable": true } }
+                    );
+                }
+                await Animal.findByIdAndDelete(animal._id);
+
+            } else {
+                await Animal.findByIdAndUpdate(animal._id, {
+                    $pull: { owners: userId }
+                });
+            }
+        }
+        const deletedUser = await User.findByIdAndDelete(userId);
+
+        if (!deletedUser) {
+            return res.status(404).json({ message: "User does not exist" });
+        }
+
+        res.status(200).json({ 
+            message: "Deletion completed" 
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
+    }
+};
+
+
 export {
     registerUser,
     loginUser,
-    logoutuser
+    logoutuser,
+    deleteUserAccount
 };
