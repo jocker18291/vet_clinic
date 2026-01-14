@@ -20,8 +20,8 @@ const visitSchema = new Schema ({
     },
     status: {
         type: String,
-        enum: ['SCHEDULED', 'COMPLETED', 'CANCELLED'],
-        default: 'SCHEDULED'
+        enum: ['PENDING', 'DONE', 'CANCELLED', 'CONFIRMED'],
+        default: 'PENDING'
     },
     description: {
         type: String

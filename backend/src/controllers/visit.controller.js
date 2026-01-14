@@ -129,7 +129,7 @@ const completeVisit = async (req, res) => {
         const updatedVisit = await Visit.findByIdAndUpdate(
             visitID,
             {
-                status: 'COMPLETED',
+                status: 'DONE',
                 description: description || visit.description
             },
             { new: true}
@@ -171,7 +171,7 @@ const getMonthlyStats = async (req, res) => {
                     _id: "$vet", 
                     totalVisits: { $sum: 1 },
                     completed: { 
-                        $sum: { $cond: [{ $eq: ["$status", "COMPLETED"] }, 1, 0] } 
+                        $sum: { $cond: [{ $eq: ["$status", "DONE"] }, 1, 0] } 
                     },
                     cancelled: { 
                         $sum: { $cond: [{ $eq: ["$status", "CANCELLED"] }, 1, 0] } 
@@ -235,10 +235,46 @@ const getVetVisits = async (req, res) => {
     }
 };
 
+const confirmVisit = async (req, res) => {
+    try {
+        const { visitId } = req.params;
+
+        const visit = await Visit.findById(visitId);
+        if (!visit) {
+            return res.status(404).json({
+                message: "Visit does not exist"
+            })
+        }
+
+        if(visit.status === 'CANCELLED') {
+            return res.status(400).json({
+                message: "Cancelled visits cannot be confirmed"
+            })
+        }
+
+        const bookingDate = new Date(visit.startTime);
+        bookingDate.setUTCHours(0, 0, 0, 0);
+        const timeSlot = visit.startTime.getUTCHours().toString().padStart(2, '0') + ":00";
+
+        await Visit.findByIdAndUpdate(visitId, { status: 'CONFIRMED' });
+
+        res.status(200).json({
+            message: "Visit confirmed"
+        })
+
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
 export {
     registerVisit,
     deleteVisit,
     completeVisit,
     getMonthlyStats,
-    getVetVisits
+    getVetVisits,
+    confirmVisit
 }
