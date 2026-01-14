@@ -80,6 +80,41 @@ const registerVisit = async (req, res) => {
     }
 }
 
+const deleteVisit = async (req, res) => {
+    try {
+        const { visitId } = req.params;
+
+        const visit = await Visit.findById(visitId);
+        if (!visit) {
+            return res.status(404).json({
+                message: "Visit does not exist"
+            })
+        }
+
+        const bookingDate = new Date(visit.startTime);
+        bookingDate.setUTCHours(0, 0, 0, 0);
+        const timeSlot = visit.startTime.getUTCHours().toString().padStart(2, '0') + ":00";
+
+        await Visit.findByIdAndUpdate(visitId, { status: 'CANCELLED' });
+
+        await Availability.updateOne(
+            { vet: visit.vet, date: bookingDate, "slots.time": timeSlot },
+            { $set: { "slots.$.isAvailable": true } }
+        );
+
+        res.status(200).json({
+            message: "Visit cancelled"
+        })
+
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal Server Error"
+        })
+    }
+}
+
 export {
-    registerVisit
+    registerVisit,
+    deleteVisit
 }
