@@ -157,8 +157,34 @@ const getMyAnimals = async (req, res) => {
     }
 };
 
+const getMyVisitHistory = async (req, res) => {
+    try {
+        const { ownerId } = req.params;
+
+        const myAnimals = await Animal.find({ ownerID: ownerId}).select('_id');
+        const animalIds = myAnimals.map(a => a._id);
+
+        const visits = await Visit.find({
+            animal: { $in: animalIds }
+        })
+        .populate('animal', 'name species')
+        .populate('vet', 'firstName lastName')
+        .sort({ startTime: -1 });
+
+        res.status(200).json({
+            message: "Visit history downloaded",
+            visits
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal Server Error", error: error.message
+        })
+    }
+}
+
 export {
     registerAnimal,
     transferAnimal,
-    getMyAnimals
+    getMyAnimals,
+    getMyVisitHistory
 }
