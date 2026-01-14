@@ -140,7 +140,25 @@ const transferAnimal = async (req, res) => {
     }
 };
 
+const getMyAnimals = async (req, res) => {
+    try {
+        const { ownerId } = req.params;
+
+        const animals = await Animal.find({ ownerID: ownerId});
+
+        res.status(200).json({
+            message: "List of animals downloaded",
+            animals
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal Server Error", error: error.message
+        })
+    }
+};
+
 export {
     registerAnimal,
-    transferAnimal
+    transferAnimal,
+    getMyAnimals
 }
