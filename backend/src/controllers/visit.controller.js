@@ -146,8 +146,72 @@ const completeVisit = async (req, res) => {
     }
 }
 
+const getMonthlyStats = async (req, res) => {
+    try {
+        const { year, month } = req.query;
+
+        if (!year || !month) {
+            return res.status(400).json({ message: "Year and month are required!" });
+        }
+
+        const startDate = new Date(Date.UTC(year, month - 1, 1));
+        const endDate = new Date(Date.UTC(year, month, 1));
+
+        const stats = await Visit.aggregate([
+            {
+                $match: {
+                    startTime: {
+                        $gte: startDate,
+                        $lt: endDate
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: "$vet", 
+                    totalVisits: { $sum: 1 },
+                    completed: { 
+                        $sum: { $cond: [{ $eq: ["$status", "COMPLETED"] }, 1, 0] } 
+                    },
+                    cancelled: { 
+                        $sum: { $cond: [{ $eq: ["$status", "CANCELLED"] }, 1, 0] } 
+                    }
+                }
+            },
+            {
+                $lookup: {
+                    from: "vets",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "vetDetails"
+                }
+            },
+            { $unwind: "$vetDetails" },
+            {
+                $project: {
+                    _id: 1,
+                    vetName: "$vetDetails.name",
+                    totalVisits: 1,
+                    completed: 1,
+                    cancelled: 1
+                }
+            }
+        ]);
+
+        res.status(200).json({
+            period: `${year}-${month}`,
+            stats
+        });
+
+    } catch (error) {
+        console.error("Aggregation Error:", error);
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
+    }
+};
+
 export {
     registerVisit,
     deleteVisit,
-    completeVisit
+    completeVisit,
+    getMonthlyStats
 }
