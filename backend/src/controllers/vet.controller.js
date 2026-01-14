@@ -95,8 +95,31 @@ const logoutVet = async (req, res) => {
     }
 }
 
+const getAllVets = async (req, res) => {
+    try {
+        const vets = await Vet.find().select("-password -login");
+
+        if(!vets || vets.length === 0) {
+            return res.status(400).json({
+                message: "No vets found"
+            })
+        }
+
+        res.status(200).json({
+            message: "Vet list downloaded",
+            count: vets.length,
+            vets
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal Server Error", error: error.message
+        })
+    }
+}
+
 export {
     registerVet,
     loginVet,
-    logoutVet
+    logoutVet,
+    getAllVets
 };
