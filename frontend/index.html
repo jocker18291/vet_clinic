@@ -46,16 +46,6 @@
         </div>
     </div>
 
-<!-- Panel Klienta -->
-    <div id="clientPanel" class="hidden">
-        <h2>Pacjenci</h2>
-        <ul>
-            <li>Fido - ostatnia wizyta: 2025-12-20 <button>Umów wizytę</button></li>
-            <li>Kitty - ostatnia wizyta: 2025-12-18 <button>Umów wizytę</button></li>
-        </ul>
-        <button id="addPetBtn">Dodaj pupila</button>
-    </div>
-
 <!-- Panel Weterynarza -->
     <div id="vetPanel" class="hidden">
         <h2>Panel Weterynarza</h2>
@@ -67,6 +57,7 @@
         </ul>
     </div>
 
+<!-- Panel Vet Kalendarz -->
     <div id="calendarPanel" class="hidden">
         <h2>Kalendarz wizyt</h2>
         <div class="calendar-wrapper">
@@ -125,12 +116,24 @@
         <button id="backToVet1">Powrót</button>
     </div>
 
+<!-- Panel Klienta -->
+    <div id="clientPanel" class="hidden">
+        <h2>Pacjenci</h2>
+        <ul id="animalsList"></ul>
+        <button id="addPetBtn">Dodaj pupila</button>
+    </div>
+
 <!--- DODAJ ZWIERZAKA (owner) --->
      <div id="addPetPanel" class="hidden">
         <h2>Dodaj zwierzaka</h2>
         <input type="text" id="petName" placeholder="Imię zwierzaka">
         <input type="text" id="petSpecies" placeholder="Gatunek (pies, kot)">
-    
+
+        <label for="vetSelect">Wybierz weterynarza:</label>
+        <select id="vetSelect">
+            <option value="">-- Wybierz --</option>
+        </select>
+        
         <div class="register-buttons">
             <button id="savePetBtn">Zapisz</button>
             <button id="backToClientBtn">Powrót</button>

@@ -21,6 +21,39 @@ const KittyBtn = document.getElementById("KittyBtn");
 const MaxBtn = document.getElementById("MaxBtn");
 const LunaBtn = document.getElementById("LunaBtn");
 
+// Lista zwierzaków funkcja
+const animalsList = document.getElementById("animalsList");
+
+async function loadMyAnimals() {
+    if (!loggedId) return;
+
+    try {
+        const res = await fetch(`/api/v1/animals/my-animals?ownerId${loggedId}`);
+        const data = await res.json();
+
+        animalsList.innerHTML = "";
+
+        if (!res.ok) {
+            animalsList.innerHTML = "<li>Błąd ładowania zwierzaków</li>";
+            return;
+        }
+
+        if (data.animals.length === 0) {
+            animalsList.innerHTML = "<li>Brak dodanych zwierzaków</li>";
+            return;
+        }
+
+        data.animals.forEach(animal => {
+            const li = document.createElement("li");
+            li.textContent = `${animal.name} (${animal.species})`;
+            animalsList.appendChild(li);
+        });
+
+    } catch (err) {
+        animalsList.innerHTML = "<li>Błąd połączenia z serwerem</li>";
+    }
+}
+
 
 // LOGOWANIE
 
@@ -72,7 +105,9 @@ loginBtn.addEventListener("click", async() => {
         loginPanel.classList.add("hidden");
         clientPanel.classList.remove("hidden");
         clientPanel.classList.add("show");
-    
+
+        loadMyAnimals();
+
     } else if (type === "vet"){
         loggedId = data.vet.id;
         
@@ -109,6 +144,7 @@ const userTypeRSelect = document.getElementById("userTypeR");
 createAccountBtn && createAccountBtn.addEventListener("click", async () => {
     const typeR = userTypeRSelect.value; 
     const email = regEmail.value.trim();
+    const login = regEmail.value.trim();
     const password = regPassword.value.trim();
     const firstName = regFirstName.value.trim();
     const lastName = regLastName.value.trim();
@@ -223,22 +259,50 @@ const backToClientBtn = document.getElementById("backToClientBtn");
 const petName = document.getElementById("petName");
 const petSpecies = document.getElementById("petSpecies");
 
-addPetBtn.addEventListener("click", () => {
+addPetBtn.addEventListener("click", async () => {
     clientPanel.classList.add("hidden");
     addPetPanel.classList.remove("hidden");
     addPetPanel.classList.add("show");
+
+    const vetSelect = document.getElementById("vetSelect");
+    vetSelect.innerHTML = '<option value="">-- Wybierz weterynarza --</option>';
+
+    try{
+        const res = await fetch("/api/v1/vet/vetList");
+        const data = await res.json();
+        const vetsList = data.vets;
+
+        vetsList.forEach( vet => {
+            const option = document.createElement("option");
+            option.value = vet._id;
+            option.textContent = vet.lastName;
+            vetSelect.appendChild(option);
+        });
+        
+    } catch (error) {
+    console.error("Błąd ładowania weterynarzy:", error);
+    }
+
 });
+
 
 // WYSYŁANIE DO BACKEND
 savePetBtn.addEventListener("click", async () => {
     const name = petName.value.trim();
     const species = petSpecies.value.trim();
-
+    const vetSelect = document.getElementById("vetSelect");
+ 
     if (!species || !name) {
         alert("Uzupełnij wszystkie pola");
         return;
     }
-
+   
+    const vetId = vetSelect.value;
+    
+    if (!vetId) {
+        alert("Wybierz weterynarza");
+        return;
+    }
 
     try {
         const response = await fetch("/api/v1/animals/register", {
@@ -249,7 +313,8 @@ savePetBtn.addEventListener("click", async () => {
             body: JSON.stringify({
                 species,
                 name,
-                ownerId: currentUserId
+                ownerID: loggedId,
+                vetID: vetId
             })
         });
 
@@ -265,6 +330,8 @@ savePetBtn.addEventListener("click", async () => {
         addPetPanel.classList.add("hidden");
         clientPanel.classList.remove("hidden");
         clientPanel.classList.add("show");
+        
+        loadMyAnimals();
 
     } catch (err) {
         alert("Błąd połączenia z serwerem");

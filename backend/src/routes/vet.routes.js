@@ -5,6 +5,6 @@ const router = Router();
 router.route('/register').post(registerVet);
 router.route('/login').post(loginVet);
 router.route('/logout').post(logoutVet);
-router.route('/').get(getAllVets);
+router.route('/vetList').get(getAllVets);
 
 export default router;
